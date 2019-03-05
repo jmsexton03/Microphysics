@@ -120,6 +120,8 @@ contains
     logical :: integration_failed
     real(rt), parameter :: failure_tolerance = 1.d-2
 
+    real(rt) :: dt_burn, dlnT
+
     EXTERNAL jac, f_rhs
 
     if (jacobian == 1) then ! Analytical
@@ -283,6 +285,56 @@ contains
                   istate, IOPT, rwork, LRW, iwork, LIW, jac, MF_JAC, rpar, ipar)
 
     endif
+
+    ! If we are suppressing the burn using the method of Shen et al. (2018), then
+    ! check whether the change in T was above a critical factor. If so, decrease
+    ! the burn time and try again.
+
+    if (burning_mode == 5) then
+
+       dlnT = (y(net_ienuc) - ener_offset) / (eos_state_in % cv * eos_state_in % T)
+
+       if (abs(dlnT) > burning_mode_factor) then
+
+          dt_burn = dt
+
+          do while (abs(dlnT) > burning_mode_factor)
+
+             dt_burn = dt_burn * 0.95
+
+             istate = 1
+
+             rwork(:) = ZERO
+             iwork(:) = 0
+
+             iwork(6) = 150000
+
+             local_time = ZERO
+
+             call eos_to_vode(eos_state_in, y, rpar)
+
+             rpar(irp_Told) = eos_state_in % T
+
+             if (dT_crit < 1.0d19) then
+
+                rpar(irp_dcvdt) = (eos_state_temp % cv - eos_state_in % cv) / (eos_state_temp % T - eos_state_in % T)
+                rpar(irp_dcpdt) = (eos_state_temp % cp - eos_state_in % cp) / (eos_state_temp % T - eos_state_in % T)
+
+             endif
+
+             y(net_ienuc) = ener_offset
+
+             call dvode(f_rhs, neqs, y, local_time, local_time + dt_burn, &
+                        ITOL, rtol, atol, ITASK, &
+                        istate, IOPT, rwork, LRW, iwork, LIW, jac, MF_JAC, rpar, ipar)
+
+             dlnT = (y(net_ienuc) - ener_offset) / (eos_state_in % cv * eos_state_in % T)
+
+          end do
+
+       end if
+
+    end if
 
     ! If we still failed, print out the current state of the integration.
     ! VODE does not always fail even though it can lead to unphysical states,

@@ -31,9 +31,14 @@ dT_crit                  real      1.0d20
 # t_s$, where $\dot{e}$ is the energy injection rate, $e$ is the
 # internal energy of the zone, $t_s$ is the sound crossing time, and
 # $f_s$ is a safety factor. $L$ is computed as min(1, $f_s (e / \dot{e}) / t_s$).
+# (4 is reserved for possible future use as a variant on 3.)
+# If 5, use the limiting method of Shen et al. (2018) which limits
+# the allowable burn time such that the change in delta ln(T) is
+# below a threshold.
 burning_mode             integer   1
 
 # If we're using burning\_mode == 3, this is the safety factor $f_s$ to use.
+# If we're usinb burning\_mode == 5, this is the critical temperature threshold.
 burning_mode_factor      real      1.d-1
 
 # Allow the temperature integration to be disabled by setting the RHS to zero.

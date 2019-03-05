@@ -185,7 +185,7 @@ contains
 
     if (burning_mode == 0 .or. burning_mode == 2) then
        self_heat = .false.
-    else if (burning_mode == 1 .or. burning_mode == 3) then
+    else if (burning_mode == 1 .or. burning_mode == 3 .or. burning_mode == 5) then
        self_heat = .true.
     else
        call amrex_error("Error: unknown burning_mode in temperature_rhs_init()")
