@@ -25,28 +25,6 @@
       call net_input(time_start,time_end,tin,din,vin,zin,ein,xin)
       dtsav = 0.0d0
 
-     xin(ineut) = 9.9999999960749624d-011
-     xin(ih1)   = 9.9999999960749624d-011
-     xin(iprot) = 2.1292611288239136d-005
-     xin(ihe3)  = 9.9999999960749624d-011
-     xin(ihe4)  = 2.9300800885911518d-005
-     xin(ic12)  = 2.1677413256910560d-006
-     xin(in14)  = 9.9999999960749624d-011
-     xin(io16)  = 1.7498576140110298d-005
-     xin(ine20) = 1.1741424377368284d-008
-     xin(img24) = 3.8525765638580660d-005
-     xin(isi28) = 0.29201712108939548
-     xin(is32)  = 0.16262945115435903
-     xin(iar36) = 3.5382086976410328d-002
-     xin(ica40) = 2.6263639578664746d-002
-     xin(iti44) = 5.0475474797658398d-005
-     xin(icr48) = 3.7709708651200048d-004
-     xin(icr56) = 3.9657987156151552d-008
-     xin(ife52) = 4.3366728983980328d-003
-     xin(ife54) = 0.42719610176599615
-     xin(ife56) = 9.6010491704748063d-004
-     xin(ini56) = 5.0678411763728733d-002
-
 ! start the clock
       call zsecond(timzer)
 
@@ -72,7 +50,7 @@
 
 
 ! back for another input point
-      goto 20
+!      goto 20
       end
 
 
@@ -362,26 +340,26 @@
 
 
 ! hydrostatic or single step cases
-      if (hydrostatic  .or.  one_step  .or. trho_hist) then
-       dydt(itemp) = 0.0d0
-       dydt(iden)  = 0.0d0
-       dydt(ivelx) = 0.0d0
-       dydt(iposx) = 0.0d0
+!       if (hydrostatic  .or.  one_step  .or. trho_hist) then
+!        dydt(itemp) = 0.0d0
+!        dydt(iden)  = 0.0d0
+!        dydt(ivelx) = 0.0d0
+!        dydt(iposx) = 0.0d0
 
 
 
-! adiabatic expansion or contraction
-      else if (expansion) then
-       taud = 446.0d0/sqrt(den0)
-       taut = 3.0d0 * taud
-       dydt(itemp) = -psi * y(itemp)/taut
-       dydt(iden)  = -psi * y(iden)/taud
-       dydt(ivelx) = 0.0d0
-       dydt(iposx) = 0.0d0
+! ! adiabatic expansion or contraction
+!       else if (expansion) then
+!        taud = 446.0d0/sqrt(den0)
+!        taut = 3.0d0 * taud
+!        dydt(itemp) = -psi * y(itemp)/taut
+!        dydt(iden)  = -psi * y(iden)/taud
+!        dydt(ivelx) = 0.0d0
+!        dydt(iposx) = 0.0d0
 
 
-! self heating
-      else if (self_heat_const_den) then
+! ! self heating
+!       else if (self_heat_const_den) then
 
 ! call an eos
        temp_row(1) = y(itemp)
@@ -402,16 +380,16 @@
 
 
 ! self heating at constant pressure
-      else if (self_heat_const_pres) then
-       dydt(itemp) = dydt(iener)*energy_scale/cp_row(1)
-       dydt(iden)  = 0.0d0
-!       dydt(iden) = -dpt_row(1)/dpd_row(1) * dydt(itemp)
-       dydt(ivelx) = 0.0d0
-       dydt(iposx) = 0.0d0
+!       else if (self_heat_const_pres) then
+!        dydt(itemp) = dydt(iener)*energy_scale/cp_row(1)
+!        dydt(iden)  = 0.0d0
+! !       dydt(iden) = -dpt_row(1)/dpd_row(1) * dydt(itemp)
+!        dydt(ivelx) = 0.0d0
+!        dydt(iposx) = 0.0d0
 
 
-! end of burning modes
-      end if
+! ! end of burning modes
+!       end if
 
       return
       end subroutine aprox21
@@ -1128,15 +1106,15 @@
 
 
 ! adiabatic expansion
-      if (expansion) then
-       taud = 446.0d0/sqrt(den0)
-       taut = 3.0d0 * taud
-       dfdy(itemp,itemp) = -psi/taut
-       dfdy(iden,iden)   = -psi/taud
+!       if (expansion) then
+!        taud = 446.0d0/sqrt(den0)
+!        taut = 3.0d0 * taud
+!        dfdy(itemp,itemp) = -psi/taut
+!        dfdy(iden,iden)   = -psi/taud
 
 
-! for self-heating
-      else if (self_heat_const_den) then
+! ! for self-heating
+!       else if (self_heat_const_den) then
 
 
 ! call an eos
@@ -1163,22 +1141,22 @@
 
 
 ! for self-heating at constant pressure
-      else if (self_heat_const_pres) then
+!       else if (self_heat_const_pres) then
 
 
-! d(itemp)/d(yi)
-      zz = energy_scale/cp_row(1)
-      dfdy(itemp,1:ionmax) = zz*dfdy(iener,1:ionmax)
+! ! d(itemp)/d(yi)
+!       zz = energy_scale/cp_row(1)
+!       dfdy(itemp,1:ionmax) = zz*dfdy(iener,1:ionmax)
 
-! d(itemp)/d(temp)
-       dfdy(itemp,itemp) = zz*dfdy(iener,itemp)
+! ! d(itemp)/d(temp)
+!        dfdy(itemp,itemp) = zz*dfdy(iener,itemp)
 
-! d(itemp)/d(den)
-       dfdy(itemp,iden) = zz*dfdy(iener,iden)
+! ! d(itemp)/d(den)
+!        dfdy(itemp,iden) = zz*dfdy(iener,iden)
 
 
-! end of the burning mode ifs
-      end if
+! ! end of the burning mode ifs
+!       end if
 
       return
       end subroutine daprox21
@@ -2026,24 +2004,24 @@
 
 
 ! hydrostatic or single step
-      if (hydrostatic  .or.  one_step  .or. trho_hist) then
-       call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!       if (hydrostatic  .or.  one_step  .or. trho_hist) then
+!        call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
 
 
 
-! adiabatic expansion
-      else if (expansion) then
-       call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+! ! adiabatic expansion
+!       else if (expansion) then
+!        call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+!        call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
 
 
-! self heating
-      else if (self_heat_const_den) then
+! ! self heating
+!       else if (self_heat_const_den) then
        do i=ionbeg,ionend
         call tree(itemp,i,eloc,neloc,nterms,nzo,iloc,jloc,np)
        enddo
@@ -2055,20 +2033,20 @@
 
 
 ! self heating at constant pressure
-      else if (self_heat_const_pres) then
-       do i=1,ionmax
-        call tree(itemp,i,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       enddo
-       call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(itemp,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       do i=1,ionmax
-        call tree(iden,i,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       enddo
-       call tree(iden,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
-       call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
-      end if
+      ! else if (self_heat_const_pres) then
+      !  do i=1,ionmax
+      !   call tree(itemp,i,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  enddo
+      !  call tree(itemp,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  call tree(itemp,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  do i=1,ionmax
+      !   call tree(iden,i,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  enddo
+      !  call tree(iden,itemp,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  call tree(iden,iden,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  call tree(ivelx,ivelx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      !  call tree(iposx,iposx,eloc,neloc,nterms,nzo,iloc,jloc,np)
+      ! end if
 
 
 ! store the number of non-zero matrix elements in common
@@ -3219,27 +3197,27 @@
 
 
 ! hydrostatic
-      if (hydrostatic  .or.  one_step  .or. trho_hist) then
+!       if (hydrostatic  .or.  one_step  .or. trho_hist) then
 
-       call add_one(itemp,itemp, 0.0d0,qdfdy,nt)
-       call add_one(iden,iden,   0.0d0,qdfdy,nt)
-       call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
-       call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
+!        call add_one(itemp,itemp, 0.0d0,qdfdy,nt)
+!        call add_one(iden,iden,   0.0d0,qdfdy,nt)
+!        call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
+!        call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
 
-! adiabatic expansion
-      else if (expansion) then
-       taud = 446.0d0/sqrt(den0)
-       taut = 3.0d0 * taud
-       x1  = -psi/taut
-       x2  = -psi/taud
+! ! adiabatic expansion
+!       else if (expansion) then
+!        taud = 446.0d0/sqrt(den0)
+!        taut = 3.0d0 * taud
+!        x1  = -psi/taut
+!        x2  = -psi/taud
 
-       call add_one(itemp,itemp, x1,qdfdy,nt)
-       call add_one(iden,iden,   x2,qdfdy,nt)
-       call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
-       call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
+!        call add_one(itemp,itemp, x1,qdfdy,nt)
+!        call add_one(iden,iden,   x2,qdfdy,nt)
+!        call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
+!        call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
 
-! self heating
-      else if (self_heat_const_den) then
+! ! self heating
+!       else if (self_heat_const_den) then
 
 ! call an eos
        temp_row(1) = btemp
@@ -3269,43 +3247,43 @@
        call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
 
 ! self heating at constant pressure
-      else if (self_heat_const_pres) then
+!       else if (self_heat_const_pres) then
 
-! temperature
-       x1 = 1.0d0/cp_row(1)
-       x2  = enuc_conv2 * x1
-       x3 = sum(zwork1(1:ionmax)*mion(1:ionmax)) * enuc_conv2
-       x4 = (x3 - dsneutdt) * x1
-       x5 = sum(zwork2(1:ionmax)*mion(1:ionmax))*enuc_conv2
-       x6 = (x5 - dsneutdd) * x1
+! ! temperature
+!        x1 = 1.0d0/cp_row(1)
+!        x2  = enuc_conv2 * x1
+!        x3 = sum(zwork1(1:ionmax)*mion(1:ionmax)) * enuc_conv2
+!        x4 = (x3 - dsneutdt) * x1
+!        x5 = sum(zwork2(1:ionmax)*mion(1:ionmax))*enuc_conv2
+!        x6 = (x5 - dsneutdd) * x1
 
-       do i=1,ionmax
-        call add_one(itemp,i, x2*xsum(i),qdfdy,nt)
-       enddo
-       call add_one(itemp,itemp, x4,qdfdy,nt)
-       call add_one(itemp,iden,  x6,qdfdy,nt)
+!        do i=1,ionmax
+!         call add_one(itemp,i, x2*xsum(i),qdfdy,nt)
+!        enddo
+!        call add_one(itemp,itemp, x4,qdfdy,nt)
+!        call add_one(itemp,iden,  x6,qdfdy,nt)
 
 
-! density
-       x1 = 0.0d0
-!       x1 = 1.0d0/cp_row(1)
-       x2 = -dpt_row(1)/dpd_row(1) * x1  * enuc_conv2
-       x3 = sum(zwork1(1:ionmax)*mion(1:ionmax)) * enuc_conv2
-       x4 = (x3 - dsneutdt) * x1
-       x5 = sum(zwork2(1:ionmax)*mion(1:ionmax)) * enuc_conv2
-       x6 = (x5 - dsneutdd) * x1
+! ! density
+!        x1 = 0.0d0
+! !       x1 = 1.0d0/cp_row(1)
+!        x2 = -dpt_row(1)/dpd_row(1) * x1  * enuc_conv2
+!        x3 = sum(zwork1(1:ionmax)*mion(1:ionmax)) * enuc_conv2
+!        x4 = (x3 - dsneutdt) * x1
+!        x5 = sum(zwork2(1:ionmax)*mion(1:ionmax)) * enuc_conv2
+!        x6 = (x5 - dsneutdd) * x1
 
-       do i=1,ionmax
-        call add_one(iden,i, x2*xsum(i),qdfdy,nt)
-       enddo
-       call add_one(iden,itemp, x4,qdfdy,nt)
-       call add_one(iden,iden,  x6,qdfdy,nt)
+!        do i=1,ionmax
+!         call add_one(iden,i, x2*xsum(i),qdfdy,nt)
+!        enddo
+!        call add_one(iden,itemp, x4,qdfdy,nt)
+!        call add_one(iden,iden,  x6,qdfdy,nt)
 
-       call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
-       call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
+!        call add_one(ivelx,ivelx, 0.0d0,qdfdy,nt)
+!        call add_one(iposx,iposx, 0.0d0,qdfdy,nt)
 
-! end of burning mode ifs
-      end if
+! ! end of burning mode ifs
+!       end if
 
 
 
@@ -5970,154 +5948,157 @@ y(ineut)*y(iprot)*ratdum(irheng)*ratdum(irdpg)
 
 ! get the burn type
 10    continue
-      if (idnet .eq. idbigbang) then
-       ibtype = 7
-      else if (idnet .eq. idtorch) then
+      ! if (idnet .eq. idbigbang) then
+      !  ibtype = 7
+      ! else if (idnet .eq. idtorch) then
 
-       write(6,01) 'give burning mode, <cr> for hydrostatic:'
-       write(6,01) '     0 = stop'
-       write(6,01) '     1 = onestep'
-       write(6,01) '     2 = hydrostatic - constant temperature & density'
-       write(6,01) '     3 = adiabatic expansion'
-       write(6,01) '     4 = self-heat at constant density'
-       write(6,01) '     5 = self heat at constant pressure'
-       write(6,01) '     6 = self-heat pressure-temp trajectory'
-       write(6,01) '     7 = big bang'
-       write(6,01) '     8 = detonation (disabled)'
-       write(6,01) '     9 = temp-den trajectory file'
+      !  write(6,01) 'give burning mode, <cr> for hydrostatic:'
+      !  write(6,01) '     0 = stop'
+      !  write(6,01) '     1 = onestep'
+      !  write(6,01) '     2 = hydrostatic - constant temperature & density'
+      !  write(6,01) '     3 = adiabatic expansion'
+      !  write(6,01) '     4 = self-heat at constant density'
+      !  write(6,01) '     5 = self heat at constant pressure'
+      !  write(6,01) '     6 = self-heat pressure-temp trajectory'
+      !  write(6,01) '     7 = big bang'
+      !  write(6,01) '     8 = detonation (disabled)'
+      !  write(6,01) '     9 = temp-den trajectory file'
 
-       string = ' '
-       read(5,03) string
-       if (string(1:1) .eq. ' ') then
-        ibtype = 2
-       else
-        ibtype = value2(string,err)
-       if (err) goto 10
-       if (ibtype .lt. 0 .or. ibtype .gt. 9) goto 10
-       end if
+      !  string = ' '
+      !  read(5,03) string
+      !  if (string(1:1) .eq. ' ') then
+      !   ibtype = 2
+      !  else
+      !   ibtype = value2(string,err)
+      !  if (err) goto 10
+      !  if (ibtype .lt. 0 .or. ibtype .gt. 9) goto 10
+      !  end if
 
-      else
+      ! else
 
-       write(6,01) 'give burning mode, <cr> for hydrostatic:'
-       write(6,01) '     0 = stop'
-       write(6,01) '     1 = onestep'
-       write(6,01) '     2 = hydrostatic - constant temperature & density'
-       write(6,01) '     3 = adiabatic expansion'
-       write(6,01) '     4 = self-heat at constant density'
-       write(6,01) '     5 = self heat at constant pressure'
-       write(6,01) '     9 = temp-den trajectory file'
+      !  write(6,01) 'give burning mode, <cr> for hydrostatic:'
+      !  write(6,01) '     0 = stop'
+      !  write(6,01) '     1 = onestep'
+      !  write(6,01) '     2 = hydrostatic - constant temperature & density'
+      !  write(6,01) '     3 = adiabatic expansion'
+      !  write(6,01) '     4 = self-heat at constant density'
+      !  write(6,01) '     5 = self heat at constant pressure'
+      !  write(6,01) '     9 = temp-den trajectory file'
 
-       string = ' '
-       read(5,03) string
-       if (string(1:1) .eq. ' ') then
-        ibtype = 2
-       else
-        ibtype = value2(string,err)
-       if (err) goto 10
-       if (ibtype .lt. 0 .or. ibtype .gt. 6) goto 10
-       end if
-      end if
+      !  string = ' '
+      !  read(5,03) string
+      !  if (string(1:1) .eq. ' ') then
+      !   ibtype = 2
+      !  else
+      !   ibtype = value2(string,err)
+      !  if (err) goto 10
+      !  if (ibtype .lt. 0 .or. ibtype .gt. 6) goto 10
+      !  end if
+      ! end if
 
 
 ! set the burn type logical
-      if (ibtype .eq. 0) then
-       stop 'normal termination'
-      else if (ibtype .eq. 1) then
-       one_step = .true.
-      else if (ibtype .eq. 2) then
-       hydrostatic = .true.
-      else if (ibtype .eq. 3) then
-       expansion = .true.
-      else if (ibtype .eq. 4) then
+      ! if (ibtype .eq. 0) then
+      !  stop 'normal termination'
+      ! else if (ibtype .eq. 1) then
+      !  one_step = .true.
+      ! else if (ibtype .eq. 2) then
+      !  hydrostatic = .true.
+      ! else if (ibtype .eq. 3) then
+      !  expansion = .true.
+      ! else if (ibtype .eq. 4) then
        self_heat_const_den = .true.
-      else if (ibtype .eq. 5) then
-       self_heat_const_pres = .true.
-      else if (ibtype .eq. 6) then
-       pt_hist = .true.
-      else if (ibtype .eq. 7) then
-       bbang = .true.
-      else if (ibtype .eq. 8) then
-       write(6,*)
-       write(6,*) 'detonation mode disabled'
-       write(6,*)
-       goto 10
-      else if (ibtype .eq. 9) then
-       trho_hist = .true.
-      else
-       goto 10
-      end if
+      ! else if (ibtype .eq. 5) then
+      !  self_heat_const_pres = .true.
+      ! else if (ibtype .eq. 6) then
+      !  pt_hist = .true.
+      ! else if (ibtype .eq. 7) then
+      !  bbang = .true.
+      ! else if (ibtype .eq. 8) then
+      !  write(6,*)
+      !  write(6,*) 'detonation mode disabled'
+      !  write(6,*)
+      !  goto 10
+      ! else if (ibtype .eq. 9) then
+      !  trho_hist = .true.
+      ! else
+      !  goto 10
+      ! end if
 
 !---------------------------------------------------------------------------
 
 
 
 ! general options
-11    continue
+! 11    continue
 
-      if (.not.bbang) then
+!       if (.not.bbang) then
 
-       if (idnet .eq. idtorch) then
+!        if (idnet .eq. idtorch) then
 
-12      write(6,*)
-        write(6,01) 'set options: on=1 or off=0'
-        write(6,01) 'screen_on  options: 0=no screening, 1=asymmetric screening, 2=symmetric screening'
-        write(6,04) 'screening option',screen_on
-        write(6,04) 'cf88_override',cf88_override
-        write(6,04) 'use rate tables',use_tables
-        write(6,04) 'use weak reactions',weak_on
-        write(6,04) 'use lmp weak rates',lmp_on
-        write(6,04) 'pure network',pure_network
-        write(6,04) 'print output files',iprint_files
-        write(6,04) 'print to screen',iprint_screen
-        write(6,*)
-        write(6,01) '<cr> if these are ok, otherwise give 7 integer vector =>'
+! 12      write(6,*)
+!         write(6,01) 'set options: on=1 or off=0'
+!         write(6,01) 'screen_on  options: 0=no screening, 1=asymmetric screening, 2=symmetric screening'
+!         write(6,04) 'screening option',screen_on
+!         write(6,04) 'cf88_override',cf88_override
+!         write(6,04) 'use rate tables',use_tables
+!         write(6,04) 'use weak reactions',weak_on
+!         write(6,04) 'use lmp weak rates',lmp_on
+!         write(6,04) 'pure network',pure_network
+!         write(6,04) 'print output files',iprint_files
+!         write(6,04) 'print to screen',iprint_screen
+!         write(6,*)
+!         write(6,01) '<cr> if these are ok, otherwise give 7 integer vector =>'
 
-        string = ' '
-        read(5,03) string
-        if (string(1:1) .ne. ' ') then
-         read(string,*) screen_on, cf88_override, use_tables, weak_on, lmp_on, pure_network, iprint_files, iprint_screen
-         goto 12
-        end if
+!         string = ' '
+!         read(5,03) string
+!         if (string(1:1) .ne. ' ') then
+!          read(string,*) screen_on, cf88_override, use_tables, weak_on, lmp_on, pure_network, iprint_files, iprint_screen
+!          goto 12
+!       end if
 
-       else
+      screen_on = 1
+      use_tables = 1
 
-13      write(6,*)
-        write(6,01) 'set options: on=1 or off=0'
-        write(6,01) 'screen_on  options: 0=no screening, 1=asymmetric screening, 2=symmetric screening'
-        write(6,01) 'which_bdat options: 0=pre-jina bdat, 1=jina bdat'
-        write(6,04) 'screening option',screen_on
-        write(6,04) 'bdat option',which_bdat
-        write(6,04) 'cf88_override',cf88_override
-        write(6,04) 'use rate tables',use_tables
-        write(6,04) 'pure network',pure_network
-        write(6,04) 'print output files',iprint_files
-        write(6,04) 'print to screen',iprint_screen
-        write(6,*)
-        write(6,01) '<cr> if these are ok, otherwise give 5 integer vector =>'
+!       else
 
-        string = ' '
-        read(5,03) string
-        if (string(1:1) .ne. ' ') then
-         read(string,*) screen_on, which_bdat, cf88_override, use_tables, pure_network, iprint_files, iprint_screen
-         goto 13
-        end if
-       end if
+! 13      write(6,*)
+!         write(6,01) 'set options: on=1 or off=0'
+!         write(6,01) 'screen_on  options: 0=no screening, 1=asymmetric screening, 2=symmetric screening'
+!         write(6,01) 'which_bdat options: 0=pre-jina bdat, 1=jina bdat'
+!         write(6,04) 'screening option',screen_on
+!         write(6,04) 'bdat option',which_bdat
+!         write(6,04) 'cf88_override',cf88_override
+!         write(6,04) 'use rate tables',use_tables
+!         write(6,04) 'pure network',pure_network
+!         write(6,04) 'print output files',iprint_files
+!         write(6,04) 'print to screen',iprint_screen
+!         write(6,*)
+!         write(6,01) '<cr> if these are ok, otherwise give 5 integer vector =>'
 
-       if (screen_on .lt. 0     .or.  screen_on .gt. 2)     goto 11
-       if (cf88_override .lt. 0 .or.  cf88_override .gt. 1) goto 11
-       if (use_tables .lt. 0    .or.  use_tables .gt. 1)    goto 11
-       if (weak_on .lt. 0       .or.  weak_on .gt. 1)       goto 11
-       if (lmp_on .lt. 0        .or.  lmp_on .gt. 1)        goto 11
-       if (pure_network .lt. 0  .or.  pure_network .gt. 1)  goto 11
-       if (iprint_files .lt. 0  .or.  iprint_files .gt. 1)  goto 11
-       if (iprint_screen .lt. 0 .or.  iprint_screen .gt. 1) goto 11
-       if (which_bdat .eq. pre_jina_bdat .and. cf88_override .eq. 0) then
-        cf88_override = 1
-        write(6,*)
-        write(6,*) 'cf88_override required for pre-jina bdat, setting to 1'
-        write(6,*)
-       end if
-      end if
+!         string = ' '
+!         read(5,03) string
+!         if (string(1:1) .ne. ' ') then
+!          read(string,*) screen_on, which_bdat, cf88_override, use_tables, pure_network, iprint_files, iprint_screen
+!          goto 13
+!         end if
+!        end if
+
+!        if (screen_on .lt. 0     .or.  screen_on .gt. 2)     goto 11
+!        if (cf88_override .lt. 0 .or.  cf88_override .gt. 1) goto 11
+!        if (use_tables .lt. 0    .or.  use_tables .gt. 1)    goto 11
+!        if (weak_on .lt. 0       .or.  weak_on .gt. 1)       goto 11
+!        if (lmp_on .lt. 0        .or.  lmp_on .gt. 1)        goto 11
+!        if (pure_network .lt. 0  .or.  pure_network .gt. 1)  goto 11
+!        if (iprint_files .lt. 0  .or.  iprint_files .gt. 1)  goto 11
+!        if (iprint_screen .lt. 0 .or.  iprint_screen .gt. 1) goto 11
+!        if (which_bdat .eq. pre_jina_bdat .and. cf88_override .eq. 0) then
+!         cf88_override = 1
+!         write(6,*)
+!         write(6,*) 'cf88_override required for pre-jina bdat, setting to 1'
+!         write(6,*)
+!        end if
+!       end if
 
 !---------------------------------------------------------------------------
 
@@ -6145,37 +6126,37 @@ y(ineut)*y(iprot)*ratdum(irheng)*ratdum(irdpg)
 
 
 ! get the bigbang parameters; set default to wmap 2008 (5 year) values
-      if (bbang) then
+!       if (bbang) then
 
-       eta1    = 6.23d-10
-       xnnu    = 3.0d0
-       hubble  = 70.5d0
-       cmbtemp = 2.725d0
+!        eta1    = 6.23d-10
+!        xnnu    = 3.0d0
+!        hubble  = 70.5d0
+!        cmbtemp = 2.725d0
 
-16     write(6,*)
-       write(6,02) 'bigbang parameters - wmap 2005 values '
-       write(6,*)
-       write(6,02) 'eta',eta1
-       write(6,02) 'number of neutrino families',xnnu
-       write(6,02) 'hubble constant',hubble
-       write(6,02) 'present cmb temperature',cmbtemp
-       write(6,*)
-       write(6,01) '<cr> if ok, enter 0 to enter values, enter 1 to exit program =>'
+! 16     write(6,*)
+!        write(6,02) 'bigbang parameters - wmap 2005 values '
+!        write(6,*)
+!        write(6,02) 'eta',eta1
+!        write(6,02) 'number of neutrino families',xnnu
+!        write(6,02) 'hubble constant',hubble
+!        write(6,02) 'present cmb temperature',cmbtemp
+!        write(6,*)
+!        write(6,01) '<cr> if ok, enter 0 to enter values, enter 1 to exit program =>'
 
-       string = ' '
-       read(5,03) string
-       if (string(1:1) .ne. ' ') then
-        i = value2(string,err)
-        if (err) goto 16
-        if (i .eq. 0) then
-         write(6,01) 'give eta, xnu, hubble, and cmbtemp  =>'
-         read(5,*) eta1, xnnu, hubble, cmbtemp
-         goto 16
-        else
-         stop 'normal termination'
-        end if
-       end if
-      end if
+!        string = ' '
+!        read(5,03) string
+!        if (string(1:1) .ne. ' ') then
+!         i = value2(string,err)
+!         if (err) goto 16
+!         if (i .eq. 0) then
+!          write(6,01) 'give eta, xnu, hubble, and cmbtemp  =>'
+!          read(5,*) eta1, xnnu, hubble, cmbtemp
+!          goto 16
+!         else
+!          stop 'normal termination'
+!         end if
+!        end if
+!       end if
 
 
 !---------------------------------------------------------------------------
@@ -6232,155 +6213,180 @@ y(ineut)*y(iprot)*ratdum(irheng)*ratdum(irdpg)
 !---------------------------------------------------------------------------
 
 ! get the initial thermodynamics
-      write(6,*)
-      if (self_heat_const_pres) then
-       write(6,01) 'give the ending time, temperature, pressure =>'
-       read(5,*)  time_end,tin,bpres
+!       write(6,*)
+!       if (self_heat_const_pres) then
+!        write(6,01) 'give the ending time, temperature, pressure =>'
+!        read(5,*)  time_end,tin,bpres
 
-! remove the initial temperature as a user-input; too many people enter inappropriate values
-      else if (bbang) then
-       write(6,01) 'give the ending time in seconds (suggest 1e6) =>'
-       read(5,*)  time_end
-       tin= 1.0d11
+! ! remove the initial temperature as a user-input; too many people enter inappropriate values
+!       else if (bbang) then
+!        write(6,01) 'give the ending time in seconds (suggest 1e6) =>'
+!        read(5,*)  time_end
+!        tin= 1.0d11
 
-! thermodynamic profile being given
-      else if (trho_hist .or. pt_hist) then
-       write(6,*) 'give the trajectory file =>'
-       read(5,03) trho_file
+! ! thermodynamic profile being given
+!       else if (trho_hist .or. pt_hist) then
+!        write(6,*) 'give the trajectory file =>'
+!        read(5,03) trho_file
 
-       call update2(time_start,tin,din)
-       time_start    = zwork1(1)
-       time_end      = zwork1(2)
-       zye           = zwork1(3)
+!        call update2(time_start,tin,din)
+!        time_start    = zwork1(1)
+!        time_end      = zwork1(2)
+!        zye           = zwork1(3)
 
-      else
-          time_end = 5.7933272d-05
-          tin = 3706947837.5018277
-          din = 8854168.6647639442
-       ! write(6,01) 'give the ending time, temperature, density =>'
-       ! read(5,*)  time_end,tin,din
-      end if
+!       else
+!           time_end = 5.7933272d-05
+!           tin = 3706947837.5018277
+!           din = 8854168.6647639442
+!        ! write(6,01) 'give the ending time, temperature, density =>'
+!        ! read(5,*)  time_end,tin,din
+!       end if
 
-! limit the temperature since the rates are invalid much above t9=100
-       tin = min(1.0d11,tin)
-
-
-
-! set variables based on the burn type
-
-! adiabatic expansion
-! psi =  1 is an adiabatic expansion, -1 in an adiabatic implosion
-
-      if (expansion) then
-       psi       = 1.0d0
-!       psi       = -1.0d0
-       den0      = din
-       temp0     = tin
-       temp_stop = 1.0d7
-!       temp_stop = 1.0d10
-       if ( (psi .ge. 1.0  .and. temp_stop .ge. tin)  .or. &
-            (psi .le. -1.0 .and. temp_stop .le. tin)) &
-          stop 'bad adiabatic temp_stop in routine burner'
-      end if
-
-!---------------------------------------------------------------------------
+! ! limit the temperature since the rates are invalid much above t9=100
+!        tin = min(1.0d11,tin)
 
 
 
-! set the initial composition
-      if (bbang) then
+! ! set variables based on the burn type
 
-! set the initial n and p abundances; equation 3 of wagoner et al 1967
-       fac = exp((mn - mp)*clight**2/(kerg*tin))
-       xneut = 1.0d0/(1.0d0 + fac)
-       xh1   = 1.0d0 - xneut
+! ! adiabatic expansion
+! ! psi =  1 is an adiabatic expansion, -1 in an adiabatic implosion
 
-! set the density from the temperature and eta1
-       f1  = 30.0d0 * zeta3/pi**4 * asol/(kerg*avo)
-       din = f1 * eta1 * tin**3
+!       if (expansion) then
+!        psi       = 1.0d0
+! !       psi       = -1.0d0
+!        den0      = din
+!        temp0     = tin
+!        temp_stop = 1.0d7
+! !       temp_stop = 1.0d10
+!        if ( (psi .ge. 1.0  .and. temp_stop .ge. tin)  .or. &
+!             (psi .le. -1.0 .and. temp_stop .le. tin)) &
+!           stop 'bad adiabatic temp_stop in routine burner'
+!       end if
 
-! set the composition type
-       ictype = 4
-
-      else
- 20    write(6,*)
-       write(6,01) 'give initial composition, <cr> for specify initial composition :'
-       write(6,01) '     ictype = 0 = read from file'
-       write(6,01) '              1 = solar abundances'
-       write(6,01) '              2 = nse'
-       write(6,01) '              3 = specify initial composition at terminal'
-
-       string = ' '
-       read(5,03) string
-       if (string(1:1) .eq. ' ') then
-        ictype = 3
-       else
-        ictype = value2(string,err)
-        if (err) goto 20
-        if (ictype .lt. 0 .or. ictype .gt. 3) goto 20
-       end if
-      end if
+! !---------------------------------------------------------------------------
 
 
 
-      if (ictype .eq. 0) then
-       call read_abundances_from_file(xin)
+! ! set the initial composition
+!       if (bbang) then
 
-      else if (ictype .eq. 1) then
-       do i=1,ionmax
-        xin(i) = andgrev(ionam(i),z,a,xelem)
-       enddo
-       if (iprot .ne. 0) xin(iprot) = andgrev('h1   ',z,a,xelem)
+! ! set the initial n and p abundances; equation 3 of wagoner et al 1967
+!        fac = exp((mn - mp)*clight**2/(kerg*tin))
+!        xneut = 1.0d0/(1.0d0 + fac)
+!        xh1   = 1.0d0 - xneut
 
-      else if (ictype .eq. 2) then
-       if (zye .eq. 0.0) zye   = 0.5d0
-       igues = 1
-       call nse(tin,din,zye,igues,1,1,xin,xmun,xmup,0)
+! ! set the density from the temperature and eta1
+!        f1  = 30.0d0 * zeta3/pi**4 * asol/(kerg*avo)
+!        din = f1 * eta1 * tin**3
 
-      else if (ictype .eq. 3) then
-        ! write(6,01) &
-        ! 'n h1 he4 c12 c13 n14 o16 ne20 ne22 mg24 si28 s32 fe52 fe54 fe56 ni56 =>'
-        ! read(5,*) xneut,xh1,xhe4,xc12,xc13,xn14,xo16,xne20,xne22,xmg24,xsi28, &
-        !           xs32,xfe52,xfe54,xfe56,xni56
-      end if
+! ! set the composition type
+!        ictype = 4
 
+!       else
+!  20    write(6,*)
+!        write(6,01) 'give initial composition, <cr> for specify initial composition :'
+!        write(6,01) '     ictype = 0 = read from file'
+!        write(6,01) '              1 = solar abundances'
+!        write(6,01) '              2 = nse'
+!        write(6,01) '              3 = specify initial composition at terminal'
 
-! set the composition variables
-      ! if (ictype .eq. 3 .or. ictype .eq. 4) then
-      !  if (ineut .ne. 0) xin(ineut) = xneut
-      !  if (ih1   .ne. 0) xin(ih1)   = xh1
-      !  if (iprot .ne. 0) xin(iprot) = xh1
-      !  if (ih1 .ne. 0 .and. iprot .ne. 0) xin(iprot) = 0.0d0
-      !  if (ihe4  .ne. 0) xin(ihe4)  = xhe4
-      !  if (ic12  .ne. 0) xin(ic12)  = xc12
-      !  if (ic13  .ne. 0) xin(ic13)  = xc13
-      !  if (in14  .ne. 0) xin(in14)  = xn14
-      !  if (io16  .ne. 0) xin(io16)  = xo16
-      !  if (ine20 .ne. 0) xin(ine20) = xne20
-      !  if (ine22 .ne. 0) xin(ine22) = xne22
-      !  if (img24 .ne. 0) xin(img24) = xmg24
-      !  if (isi28 .ne. 0) xin(isi28) = xsi28
-      !  if (is32  .ne. 0) xin(is32)  = xs32
-      !  if (ife52 .ne. 0) xin(ife52) = xfe52
-      !  if (ife54 .ne. 0) xin(ife54) = xfe54
-      !  if (ife56 .ne. 0) xin(ife56) = xfe56
-      !  if (ini56 .ne. 0) xin(ini56) = xni56
-      ! end if
+!        string = ' '
+!        read(5,03) string
+!        if (string(1:1) .eq. ' ') then
+!         ictype = 3
+!        else
+!         ictype = value2(string,err)
+!         if (err) goto 20
+!         if (ictype .lt. 0 .or. ictype .gt. 3) goto 20
+!        end if
+!       end if
 
 
-! write out the input composition so far
-!      write(6,02) (ionam(i),xin(i), i=1,ionmax)
-!      read(5,*)
+
+!       if (ictype .eq. 0) then
+!        call read_abundances_from_file(xin)
+
+!       else if (ictype .eq. 1) then
+!        do i=1,ionmax
+!         xin(i) = andgrev(ionam(i),z,a,xelem)
+!        enddo
+!        if (iprot .ne. 0) xin(iprot) = andgrev('h1   ',z,a,xelem)
+
+!       else if (ictype .eq. 2) then
+!        if (zye .eq. 0.0) zye   = 0.5d0
+!        igues = 1
+!        call nse(tin,din,zye,igues,1,1,xin,xmun,xmup,0)
+
+!       else if (ictype .eq. 3) then
+!         ! write(6,01) &
+!         ! 'n h1 he4 c12 c13 n14 o16 ne20 ne22 mg24 si28 s32 fe52 fe54 fe56 ni56 =>'
+!         ! read(5,*) xneut,xh1,xhe4,xc12,xc13,xn14,xo16,xne20,xne22,xmg24,xsi28, &
+!         !           xs32,xfe52,xfe54,xfe56,xni56
+!       end if
 
 
-! normalize the composition
-      xin(1:ionmax) = min(1.0d0,max(xin(1:ionmax),1.0d-30))
-      xx = 1.0d0/sum(xin(1:ionmax))
-      xin(1:ionmax) = min(1.0d0,max(xin(1:ionmax) * xx,1.0d-30))
+! ! set the composition variables
+!       ! if (ictype .eq. 3 .or. ictype .eq. 4) then
+!       !  if (ineut .ne. 0) xin(ineut) = xneut
+!       !  if (ih1   .ne. 0) xin(ih1)   = xh1
+!       !  if (iprot .ne. 0) xin(iprot) = xh1
+!       !  if (ih1 .ne. 0 .and. iprot .ne. 0) xin(iprot) = 0.0d0
+!       !  if (ihe4  .ne. 0) xin(ihe4)  = xhe4
+!       !  if (ic12  .ne. 0) xin(ic12)  = xc12
+!       !  if (ic13  .ne. 0) xin(ic13)  = xc13
+!       !  if (in14  .ne. 0) xin(in14)  = xn14
+!       !  if (io16  .ne. 0) xin(io16)  = xo16
+!       !  if (ine20 .ne. 0) xin(ine20) = xne20
+!       !  if (ine22 .ne. 0) xin(ine22) = xne22
+!       !  if (img24 .ne. 0) xin(img24) = xmg24
+!       !  if (isi28 .ne. 0) xin(isi28) = xsi28
+!       !  if (is32  .ne. 0) xin(is32)  = xs32
+!       !  if (ife52 .ne. 0) xin(ife52) = xfe52
+!       !  if (ife54 .ne. 0) xin(ife54) = xfe54
+!       !  if (ife56 .ne. 0) xin(ife56) = xfe56
+!       !  if (ini56 .ne. 0) xin(ini56) = xni56
+!       ! end if
+
+
+! ! write out the input composition so far
+! !      write(6,02) (ionam(i),xin(i), i=1,ionmax)
+! !      read(5,*)
+
+
+! ! normalize the composition
+!       xin(1:ionmax) = min(1.0d0,max(xin(1:ionmax),1.0d-30))
+!       xx = 1.0d0/sum(xin(1:ionmax))
+!       xin(1:ionmax) = min(1.0d0,max(xin(1:ionmax) * xx,1.0d-30))
 
 !      write(6,*) 'post norm', ionmax,xin(ih1)
 !      write(6,02) (ionam(i),xin(i), i=1,ionmax)
-!      read(5,*)
+      !      read(5,*)
+
+      din = 8854168.6647639442d0
+      tin = 3706947837.5018277d0
+      time_end = 5.7933272d-05
+     xin(ineut) = 9.9999999960749624d-011
+     xin(ih1)   = 9.9999999960749624d-011
+     xin(iprot) = 2.1292611288239136d-005
+     xin(ihe3)  = 9.9999999960749624d-011
+     xin(ihe4)  = 2.9300800885911518d-005
+     xin(ic12)  = 2.1677413256910560d-006
+     xin(in14)  = 9.9999999960749624d-011
+     xin(io16)  = 1.7498576140110298d-005
+     xin(ine20) = 1.1741424377368284d-008
+     xin(img24) = 3.8525765638580660d-005
+     xin(isi28) = 0.29201712108939548
+     xin(is32)  = 0.16262945115435903
+     xin(iar36) = 3.5382086976410328d-002
+     xin(ica40) = 2.6263639578664746d-002
+     xin(iti44) = 5.0475474797658398d-005
+     xin(icr48) = 3.7709708651200048d-004
+     xin(icr56) = 3.9657987156151552d-008
+     xin(ife52) = 4.3366728983980328d-003
+     xin(ife54) = 0.42719610176599615
+     xin(ife56) = 9.6010491704748063d-004
+     xin(ini56) = 5.0678411763728733d-002
 
 
 !---------------------------------------------------------------------------
@@ -6417,10 +6423,11 @@ y(ineut)*y(iprot)*ratdum(irheng)*ratdum(irdpg)
 !---------------------------------------------------------------------------
 
 ! get the output root file name
-      write(6,*)  ' '
-      write(6,01) 'give output root name, <cr> for default "foo_"=>'
-      read(5,03) hfile
-      if (hfile(1:2) .eq. '  ')  hfile = 'foo_'
+      ! write(6,*)  ' '
+      ! write(6,01) 'give output root name, <cr> for default "foo_"=>'
+      ! read(5,03) hfile
+      !if (hfile(1:2) .eq. '  ')
+      hfile = 'foo_'
 
 
 
