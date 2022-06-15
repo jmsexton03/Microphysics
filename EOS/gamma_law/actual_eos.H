@@ -60,7 +60,7 @@ void actual_eos (I input, T& state)
     } else {
         Real sum = 0.0;
         for (int n = 0; n < NumSpec; n++) {
-            sum += (zion[n] + 1.0) * state.xn[n] * aion_inv[n];
+            sum += (NetworkProperties::zion(n) + 1.0) * state.xn[n] / NetworkProperties::aion(n);
         }
         state.mu = 1.0 / sum;
     }

@@ -39,7 +39,7 @@ void composition (T& state)
 
   Real sum = 0;
   for (int n = 0; n < NumSpec; n++) {
-    sum += state.xn[n] * zion[n] * aion_inv[n];
+    sum += state.xn[n] * NetworkProperties::zion(n) / NetworkProperties::aion(n);
   }
 
   state.mu_e = 1.0 / sum;
@@ -48,7 +48,7 @@ void composition (T& state)
   sum = 0;
 
   for (int n = 0; n < NumSpec; n++) {
-    sum += state.xn[n] * aion_inv[n];
+    sum += state.xn[n] / NetworkProperties::aion(n);
   }
 
   state.abar = 1.0 / sum;
@@ -66,14 +66,14 @@ eos_xderivs_t composition_derivatives (const T& state)
   for (int n = 0; n < NumSpec; n++) {
       if constexpr (has_pressure<T>::value) {
           state_xderivs.dpdX[n] =
-              state.dpdA * (state.abar * aion_inv[n]) * (aion[n] - state.abar) +
-              state.dpdZ * (state.abar * aion_inv[n]) * (zion[n] - state.zbar);
+              state.dpdA * (state.abar  / NetworkProperties::aion(n)) * (NetworkProperties::aion(n) - state.abar) +
+              state.dpdZ * (state.abar  / NetworkProperties::aion(n)) * (NetworkProperties::zion(n) - state.zbar);
       }
 
       if constexpr (has_energy<T>::value) {
           state_xderivs.dedX[n] =
-              state.dedA * (state.abar * aion_inv[n]) * (aion[n] - state.abar) +
-              state.dedZ * (state.abar * aion_inv[n]) * (zion[n] - state.zbar);
+              state.dedA * (state.abar  / NetworkProperties::aion(n)) * (NetworkProperties::aion(n) - state.abar) +
+              state.dedZ * (state.abar  / NetworkProperties::aion(n)) * (NetworkProperties::zion(n) - state.zbar);
       }
 
       if constexpr (has_pressure<T>::value) {

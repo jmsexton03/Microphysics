@@ -142,8 +142,8 @@ void write_job_info(const std::string& dir) {
       jobInfoFile <<
         std::setw(6) << i << SkipSpace <<
         std::setw(mlen+1) << std::setfill(' ') << short_spec_names_cxx[i] << SkipSpace <<
-        std::setw(7) << aion[i] << SkipSpace <<
-        std::setw(7) << zion[i] << "\n";
+        std::setw(7) << NetworkProperties::aion(i) << SkipSpace <<
+        std::setw(7) << NetworkProperties::zion(i) << "\n";
     }
   jobInfoFile << "\n\n";
 
